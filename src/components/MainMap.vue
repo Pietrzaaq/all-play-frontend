@@ -1,13 +1,15 @@
 ﻿<script setup>
 import "leaflet/dist/leaflet.css";
-import {LMap, LTileLayer, LMarker, LIcon, LPolygon, LControlZoom} from "@vue-leaflet/vue-leaflet";
-import {latLng} from "leaflet";
-import {onBeforeMount, ref} from "vue";
+import { LMap, LTileLayer, LMarker, LIcon, LPolygon, LControlZoom } from "@vue-leaflet/vue-leaflet";
+import { latLng } from "leaflet";
+import { onBeforeMount, ref } from "vue";
 import axios from "axios";
 import contextMenuComp from "./contextMenuComp.js";
+import ContextMenu from 'primevue/contextmenu';
+import Badge from "primevue/badge";
 
-const contextMenu = ref(null);
-const { contextMenuStyle,contextMenuOptions, handleContextMenuClick, contextMenuOptionClicked } = contextMenuComp(contextMenu);
+// Map
+const map = ref(null);
 let center = ref([51.7785551, 19.474152]);
 const zoom = ref(12);
 const url = ref('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
@@ -17,18 +19,24 @@ const polygon = ref({
   color: 'green'
 });
 
+// Context menu
+const contextMenu = ref(null);
+const { contextMenuOptions, handleContextMenuClick } = contextMenuComp(contextMenu);
+
 function onMapClick(e) {
   console.log('onMapClick', e);
 }
 
 onBeforeMount(async () => {
-  const result = await axios.get("https://localhost:7046/areas");
+  const result = await axios.get("https://localhost:5000/areas");
   console.log(result.data);
   areas.value = result.data;
 
   navigator.geolocation.getCurrentPosition((position) => {
     center.value = [position.latitude, position.longitude];
   });
+  
+  // map.value.invalidateSize();
 });
 </script>
 
@@ -41,8 +49,9 @@ onBeforeMount(async () => {
 		:zoom="zoom"
 		:center="[51.7785551, 19.474152]"
 		:min-zoom="4"
+		aria-haspopup="true"
 		@click="onMapClick"
-		@contextmenu="handleContextMenuClick($event)">
+		@contextmenu="handleContextMenuClick">
 		<l-tile-layer
 			:url="url"
 			layer-type="base"
@@ -66,13 +75,23 @@ onBeforeMount(async () => {
 		<l-control-zoom
 			class="control-zoom-bottom-right"
 			:position="'bottomright'" />
-		<vue-simple-context-menu
+		<ContextMenu
 			ref="contextMenu"
-			element-id="map-context-menu"
 			class="map-context-menu"
-			:options="contextMenuOptions"
-			:style="`top: ${contextMenuStyle.top}px; left: ${contextMenuStyle.left}px`"
-			@option-clicked="contextMenuOptionClicked" />
+			:model="contextMenuOptions">
+			<template #item="{ item, props }">
+				<a
+					class="flex align-items-center"
+					v-bind="props.action">
+					<font-awesome-icon :icon="item.icon" />
+					<span class="ml-2">{{ item.label }}</span>
+					<Badge
+						v-if="item.badge"
+						class="ml-auto"
+						:value="item.badge" />
+				</a>
+			</template>
+		</ContextMenu>
 	</l-map>
 </main>
 </template>
@@ -89,16 +108,5 @@ onBeforeMount(async () => {
 
 .leaflet-control-zoom .control-zoom-bottom-right {
   display: block !important;
-}
-
-.map-context-menu {
-  position: fixed;
-  z-index: 1000;
-  margin: 0;
-  padding: 1rem;
-  cursor: pointer;
-  color: var(--primary-font-color);
-  border-radius: 0 1.5rem 1.5rem 1.5rem !important;
-  min-width: 15rem;
 }
 </style>

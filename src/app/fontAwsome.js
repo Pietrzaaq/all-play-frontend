@@ -1,6 +1,6 @@
 ﻿/* eslint-disable vue/component-definition-name-casing */
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faGear, faUser, faMagnifyingGlass, faCalendar, faStar, faPeopleGroup, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faUser, faMagnifyingGlass, faCalendar, faStar, faPeopleGroup, faClockRotateLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
     faGear, 
@@ -8,6 +8,7 @@ library.add(
     faMagnifyingGlass, 
     faCalendar, 
     faStar, 
-    faPeopleGroup, 
-    faClockRotateLeft
+    faPeopleGroup,
+    faClockRotateLeft,
+    faPlus
 );

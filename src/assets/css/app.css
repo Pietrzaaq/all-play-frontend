@@ -3,10 +3,13 @@
     line-height: 1.5;
     font-weight: 400;
     
+    --primary-background-color: #C850C0;
+    --primary-background-gradient: linear-gradient(45deg, #4158D0 0%, #C850C0 53%, #FFCC70 99%);
+    
     --primary-background-color-dark: #2b2b2b;
     --primary-background-color-dark-light: #5c5c5c;
     
-    --primary-font-color: #e0e0e0;
+    --primary-font-color: #ffffff;
 
     color-scheme: light dark;
     background-color: var(--primary-background-color-dark-light);
@@ -30,4 +33,16 @@ body .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     margin: 0 !important;
     font-weight: 500;
 }
+
+.map-context-menu {
+    border-radius: 0 1.5rem 1.5rem 1.5rem !important;
+}
+
+.side-bar-header-search-bar-autocomplete {
+    width: 90% !important;
+    margin: auto 0;
+    border-radius: 1rem;
+    border: none;
+}
+
 

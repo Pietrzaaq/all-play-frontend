@@ -1,4 +1,5 @@
 ﻿import { ref } from 'vue';
+import sportEventService from "../services/sportEventService.js";
 
 export default function contextMenuComp(contextMenuRef) {
     const contextMenu = ref(contextMenuRef);
@@ -7,36 +8,35 @@ export default function contextMenuComp(contextMenuRef) {
         left: 0,
     });
     
+    let eventLatLong = ref(null);
+    
     const CONTEXT_MENU_OPTIONS = {
         ADD_EVENT: 'add-event'
     };
 
     const contextMenuOptions = [
-        {
-            name: 'Add event',
-            action: CONTEXT_MENU_OPTIONS.ADD_EVENT,
-            func: addEvent
-        }
+        { label: 'Add', icon: 'fa-solid fa-plus', command: addEvent }
     ];
 
     function handleContextMenuClick(event) {
         contextMenuStyle.value.left = event.containerPoint.x;
         contextMenuStyle.value.top = event.containerPoint.y;
         
-        contextMenu.value.showMenu(event);
-    }
-
-    function contextMenuOptionClicked(event) {
+        console.log(event);
+        eventLatLong.value = event.latlng;
+        if (event && event.originalEvent)
+            contextMenu.value.show(event.originalEvent);
     }
     
     function addEvent() {
-        
+        console.log('Inside add event');
+
+        sportEventService.create();
     }
     
     return { 
         contextMenuStyle, 
         contextMenuOptions, 
         CONTEXT_MENU_OPTIONS,
-        handleContextMenuClick,
-        contextMenuOptionClicked};
+        handleContextMenuClick };
 }
