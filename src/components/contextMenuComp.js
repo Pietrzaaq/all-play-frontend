@@ -8,6 +8,8 @@ export default function contextMenuComp(contextMenuRef) {
         left: 0,
     });
     
+    let dialogVisible = ref(false);
+    
     let eventLatLong = ref(null);
     
     const CONTEXT_MENU_OPTIONS = {
@@ -31,12 +33,14 @@ export default function contextMenuComp(contextMenuRef) {
     function addEvent() {
         console.log('Inside add event');
 
-        sportEventService.create();
+        dialogVisible.value = true;
+        // sportEventService.create();
     }
     
     return { 
         contextMenuStyle, 
         contextMenuOptions, 
         CONTEXT_MENU_OPTIONS,
-        handleContextMenuClick };
+        handleContextMenuClick,
+        dialogVisible};
 }
