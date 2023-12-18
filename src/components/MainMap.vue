@@ -49,60 +49,62 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <main
-        class="d-flex"
-        style="width: 100vw; height: 100vh">
-        <l-map
-            ref="map"
-            :zoom="zoom"
-            :center="[51.7785551, 19.474152]"
-            :min-zoom="4"
-            aria-haspopup="true"
-            @click="onMapClick"
-            @contextmenu="handleContextMenuClick">
-            <l-tile-layer
-                :url="url"
-                layer-type="base"
-                name="OpenStreetMap" />
-            <l-marker
-                v-for="area in areas"
-                :key="area.id"
-                :lat-lng="latLng(area.latitude, area.longitude)">
-                <l-icon
-                    :icon-size="[30, 50]"
-                    :icon-anchor="[12, 40]">
-                    <img
-                        style="width: 100%"
-                        src="../../public/basketball_icon.png"
-                        alt="basketball icon">
-                </l-icon>
-            </l-marker>
-            <l-polygon
-                :lat-lngs="polygon.latlngs"
-                :color="polygon.color" />
-            <l-control-zoom
-                class="control-zoom-bottom-right"
-                :position="'bottomright'" />
-            <ContextMenu
-                ref="contextMenu"
-                class="map-context-menu"
-                :model="contextMenuOptions">
-                <template #item="{ item, props }">
-                    <a
-                        class="flex align-items-center"
-                        v-bind="props.action">
-                        <font-awesome-icon :icon="item.icon" />
-                        <span class="ml-2">{{ item.label }}</span>
-                        <Badge
-                            v-if="item.badge"
-                            class="ml-auto"
-                            :value="item.badge" />
-                    </a>
-                </template>
-            </ContextMenu>
-            <AddEventDialog :visible="dialogVisible" @closeDialog="onDialogClosed"></AddEventDialog>
-        </l-map>
-    </main>
+<main
+	class="d-flex"
+	style="width: 100vw; height: 100vh">
+	<l-map
+		ref="map"
+		:zoom="zoom"
+		:center="[51.7785551, 19.474152]"
+		:min-zoom="4"
+		aria-haspopup="true"
+		@click="onMapClick"
+		@contextmenu="handleContextMenuClick">
+		<l-tile-layer
+			:url="url"
+			layer-type="base"
+			name="OpenStreetMap" />
+		<l-marker
+			v-for="area in areas"
+			:key="area.id"
+			:lat-lng="latLng(area.latitude, area.longitude)">
+			<l-icon
+				:icon-size="[30, 50]"
+				:icon-anchor="[12, 40]">
+				<img
+					style="width: 100%"
+					src="../../public/basketball_icon.png"
+					alt="basketball icon">
+			</l-icon>
+		</l-marker>
+		<l-polygon
+			:lat-lngs="polygon.latlngs"
+			:color="polygon.color" />
+		<l-control-zoom
+			class="control-zoom-bottom-right"
+			:position="'bottomright'" />
+		<ContextMenu
+			ref="contextMenu"
+			class="map-context-menu"
+			:model="contextMenuOptions">
+			<template #item="{ item, props }">
+				<a
+					class="flex align-items-center"
+					v-bind="props.action">
+					<font-awesome-icon :icon="item.icon" />
+					<span class="ml-2">{{ item.label }}</span>
+					<Badge
+						v-if="item.badge"
+						class="ml-auto"
+						:value="item.badge" />
+				</a>
+			</template>
+		</ContextMenu>
+		<AddEventDialog
+			:visible="dialogVisible"
+			@closeDialog="onDialogClosed" />
+	</l-map>
+</main>
 </template>
 
 <style scoped>

@@ -1,6 +1,6 @@
 ﻿<template>
-  <side-bar/>
-  <router-view></router-view>
+<side-bar />
+<router-view />
 </template>
 
 <script setup>

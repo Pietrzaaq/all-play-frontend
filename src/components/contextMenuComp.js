@@ -42,5 +42,5 @@ export default function contextMenuComp(contextMenuRef) {
         contextMenuOptions, 
         CONTEXT_MENU_OPTIONS,
         handleContextMenuClick,
-        dialogVisible};
+        dialogVisible };
 }

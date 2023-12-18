@@ -11,59 +11,59 @@ function search() {
 </script>
 
 <template>
-    <aside>
-        <section id="side-bar-header">
-            <div id="side-bar-header-title">
-                <h1>
-                    All Play
-                </h1>
-                <div id="side-bar-header-actions">
-                    <font-awesome-icon
-                            icon="fa-solid fa-gear"
-                            class="fa-xl" />
-                </div>
-            </div>
-            <div id="side-bar-header-search-bar">
-                <AutoComplete
-                        v-model="searchKey"
-                        class="side-bar-header-search-bar-autocomplete"
-                        :suggestions="['Matejki', 'Lumumby']"
-                        placeholder="Search..."
-                        @complete="search" />
-            </div>
-            <div />
-        </section>
-        <section id="side-bar-body">
-            <div class="side-bar-body-option">
-                <font-awesome-icon
-                        icon="fa-solid fa-star"
-                        class="p-2"
-                        style="width: 2rem; height: 2rem" />
-                <h4>Favorites</h4>
-            </div>
-            <div class="side-bar-body-option">
-                <font-awesome-icon
-                        icon="fa-solid fa-calendar"
-                        class="p-2"
-                        style="width: 2rem; height: 2rem" />
-                <h4>Calendar</h4>
-            </div>
-            <div class="side-bar-body-option">
-                <font-awesome-icon
-                        icon="fa-solid fa-people-group"
-                        class="p-2"
-                        style="width: 2rem; height: 2rem" />
-                <h4>Teams</h4>
-            </div>
-            <div class="side-bar-body-option">
-                <font-awesome-icon
-                        icon="fa-solid fa-clock-rotate-left"
-                        class="p-2"
-                        style="width: 2rem; height: 2rem" />
-                <h4>History</h4>
-            </div>
-        </section>
-    </aside>
+<aside>
+	<section id="side-bar-header">
+		<div id="side-bar-header-title">
+			<h1>
+				All Play
+			</h1>
+			<div id="side-bar-header-actions">
+				<font-awesome-icon
+					icon="fa-solid fa-gear"
+					class="fa-xl" />
+			</div>
+		</div>
+		<div id="side-bar-header-search-bar">
+			<AutoComplete
+				v-model="searchKey"
+				class="side-bar-header-search-bar-autocomplete"
+				:suggestions="['Matejki', 'Lumumby']"
+				placeholder="Search..."
+				@complete="search" />
+		</div>
+		<div />
+	</section>
+	<section id="side-bar-body">
+		<div class="side-bar-body-option">
+			<font-awesome-icon
+				icon="fa-solid fa-star"
+				class="p-2"
+				style="width: 2rem; height: 2rem" />
+			<h4>Favorites</h4>
+		</div>
+		<div class="side-bar-body-option">
+			<font-awesome-icon
+				icon="fa-solid fa-calendar"
+				class="p-2"
+				style="width: 2rem; height: 2rem" />
+			<h4>Calendar</h4>
+		</div>
+		<div class="side-bar-body-option">
+			<font-awesome-icon
+				icon="fa-solid fa-people-group"
+				class="p-2"
+				style="width: 2rem; height: 2rem" />
+			<h4>Teams</h4>
+		</div>
+		<div class="side-bar-body-option">
+			<font-awesome-icon
+				icon="fa-solid fa-clock-rotate-left"
+				class="p-2"
+				style="width: 2rem; height: 2rem" />
+			<h4>History</h4>
+		</div>
+	</section>
+</aside>
 </template>
 
 <style scoped>
