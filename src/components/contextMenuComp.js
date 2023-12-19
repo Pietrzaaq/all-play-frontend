@@ -1,15 +1,12 @@
 ﻿import { ref } from 'vue';
-import sportEventService from "../services/sportEventService.js";
 
-export default function contextMenuComp(contextMenuRef) {
+export default function contextMenuComp(contextMenuRef, dialogVisible) {
     const contextMenu = ref(contextMenuRef);
     const contextMenuStyle = ref({
         top: 0,
         left: 0,
     });
-    
-    let dialogVisible = ref(false);
-    
+
     let eventLatLong = ref(null);
     
     const CONTEXT_MENU_OPTIONS = {
@@ -21,11 +18,13 @@ export default function contextMenuComp(contextMenuRef) {
     ];
 
     function handleContextMenuClick(event) {
+        console.log('Inside  context menu');
         contextMenuStyle.value.left = event.containerPoint.x;
         contextMenuStyle.value.top = event.containerPoint.y;
         
         console.log(event);
         eventLatLong.value = event.latlng;
+        console.log(event.latlng);
         if (event && event.originalEvent)
             contextMenu.value.show(event.originalEvent);
     }
@@ -33,8 +32,12 @@ export default function contextMenuComp(contextMenuRef) {
     function addEvent() {
         console.log('Inside add event');
 
+        console.log(dialogVisible.value);
+        if (dialogVisible.value)
+            dialogVisible.value = false;
+        
         dialogVisible.value = true;
-        // sportEventService.create();
+        console.log(dialogVisible.value);
     }
     
     return { 
@@ -42,5 +45,5 @@ export default function contextMenuComp(contextMenuRef) {
         contextMenuOptions, 
         CONTEXT_MENU_OPTIONS,
         handleContextMenuClick,
-        dialogVisible };
+        eventLatLong };
 }

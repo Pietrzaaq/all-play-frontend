@@ -3,11 +3,11 @@ import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer, LMarker, LIcon, LPolygon, LControlZoom } from "@vue-leaflet/vue-leaflet";
 import { latLng } from "leaflet";
 import { onBeforeMount, ref } from "vue";
-import axios from "axios";
 import contextMenuComp from "./contextMenuComp.js";
 import ContextMenu from 'primevue/contextmenu';
 import Badge from "primevue/badge";
 import AddEventDialog from "./AddEventDialog.vue";
+import areasService from "../services/areasService.js";
 
 // Map
 const map = ref(null);
@@ -20,31 +20,35 @@ const polygon = ref({
     color: 'green'
 });
 
+// Dialog 
+const dialogVisible = ref(false);
+
 // Context menu
 const contextMenu = ref(null);
-const { contextMenuOptions, handleContextMenuClick, dialogVisible } = contextMenuComp(contextMenu);
-
-// Dialog 
-
+const { contextMenuOptions, handleContextMenuClick, eventLatLong } = contextMenuComp(contextMenu, dialogVisible);
 
 function onMapClick(e) {
-    console.log('onMapClick', e);
+  console.log('onMapClick', e);
 }
 
 function onDialogClosed() {
+  dialogVisible.value = false;
 
+  loadEvents();
+}
+
+async function loadEvents() {
+  const result = await areasService.getAll();
+  console.log(result);
+  areas.value = result.data;
 }
 
 onBeforeMount(async () => {
-    const result = await axios.get("https://localhost:5000/areas");
-    console.log(result.data);
-    areas.value = result.data;
-
-    navigator.geolocation.getCurrentPosition((position) => {
-        center.value = [position.latitude, position.longitude];
-    });
-
-    // map.value.invalidateSize();
+  await loadEvents();
+  
+  navigator.geolocation.getCurrentPosition((position) => {
+    center.value = [position.latitude, position.longitude];
+  });
 });
 </script>
 
@@ -102,7 +106,8 @@ onBeforeMount(async () => {
 		</ContextMenu>
 		<AddEventDialog
 			:visible="dialogVisible"
-			@closeDialog="onDialogClosed" />
+			:event="eventLatLong"
+			@close-dialog="onDialogClosed" />
 	</l-map>
 </main>
 </template>
