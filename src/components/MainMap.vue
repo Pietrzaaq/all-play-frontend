@@ -1,27 +1,29 @@
 ﻿<script setup>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LMarker, LIcon, LPolygon, LControlZoom } from "@vue-leaflet/vue-leaflet";
-import { latLng } from "leaflet";
-import { onBeforeMount, ref } from "vue";
+import { LMap, LTileLayer, LMarker, LIcon, LControlZoom, LGeoJson } from "@vue-leaflet/vue-leaflet";
+import { onBeforeMount, onMounted, ref } from "vue";
 import contextMenuComp from "./contextMenuComp.js";
 import ContextMenu from 'primevue/contextmenu';
 import Badge from "primevue/badge";
 import AddEventDialog from "./AddEventDialog.vue";
 import areasService from "../services/areasService.js";
+import { latLng } from "leaflet";
 
 // Map
 const map = ref(null);
 let center = ref([51.7785551, 19.474152]);
-const zoom = ref(12);
+const zoom = ref(16);
+const bounds = ref(null);
 const url = ref('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
 let areas = ref([]);
-const polygon = ref({
-    latlngs: [[51.78054616613809, 19.49480473995209], [51.78062249921673, 19.495266079902652], [51.78054284730566, 19.495673775672916], [51.7802939341772, 19.49578106403351], [51.78016117994722, 19.494949579238895]],
-    color: 'green'
-});
+// const polygon = ref({
+//     latlngs: [[51.78054616613809, 19.49480473995209], [51.78062249921673, 19.495266079902652], [51.78054284730566, 19.495673775672916], [51.7802939341772, 19.49578106403351], [51.78016117994722, 19.494949579238895]],
+//     color: 'green'
+// });
 
 // Dialog 
 const dialogVisible = ref(false);
+const areaEvent = ref();
 
 // Context menu
 const contextMenu = ref(null);
@@ -34,21 +36,61 @@ function onMapClick(e) {
 function onDialogClosed() {
   dialogVisible.value = false;
 
-  loadEvents();
+  loadAreas();
 }
 
-async function loadEvents() {
+function onMarkerClicked(event) {
+  console.log('On marker clicked', event);
+}
+
+async function loadAreas() {
   const result = await areasService.getAll();
-  console.log(result);
+  
+  if (result.data && result.data.length > 0) {
+    result.data.forEach(a => {
+      a.Polygon = JSON.parse(a.Polygon);
+      a.Coordinates = JSON.parse(a.Coordinates).coordinates;
+    });
+  }
+  
   areas.value = result.data;
 }
 
+function zoomUpdated (newZoomValue) {
+  if (zoom.value !== newZoomValue) {
+    zoom.value = newZoomValue;
+  }
+}
+
+function centerUpdated (newCenterValue) {
+  if (center.value !== newCenterValue) {
+    center.value = newCenterValue;
+  }
+}
+
+function boundsUpdated (newBoundsValue) {
+  if (bounds.value !== newBoundsValue) {
+    bounds.value = newBoundsValue;
+  }  
+}
+
+function openAddEventDialog(area) {
+  areaEvent.value = area;
+  dialogVisible.value=true;
+}
+
 onBeforeMount(async () => {
-  await loadEvents();
+  await loadAreas();
   
   navigator.geolocation.getCurrentPosition((position) => {
     center.value = [position.latitude, position.longitude];
   });
+});
+
+onMounted(() => {
+  console.log('Mounted');
+  console.log(map.value);
+  map.value.ready = false;
 });
 </script>
 
@@ -59,11 +101,14 @@ onBeforeMount(async () => {
 	<l-map
 		ref="map"
 		:zoom="zoom"
-		:center="[51.7785551, 19.474152]"
+		:center="center"
 		:min-zoom="4"
 		aria-haspopup="true"
 		@click="onMapClick"
-		@contextmenu="handleContextMenuClick">
+		@contextmenu="handleContextMenuClick"
+		@update:zoom="zoomUpdated"
+		@update:center="centerUpdated"
+		@update:bounds="boundsUpdated">
 		<l-tile-layer
 			:url="url"
 			layer-type="base"
@@ -71,19 +116,29 @@ onBeforeMount(async () => {
 		<l-marker
 			v-for="area in areas"
 			:key="area.id"
-			:lat-lng="latLng(area.latitude, area.longitude)">
+			:lat-lng="latLng(area.Coordinates[1], area.Coordinates[0])"
+			:name="area.name"
+			@click="onMarkerClicked">
 			<l-icon
-				:icon-size="[30, 50]"
-				:icon-anchor="[12, 40]">
+				:icon-size="[80, 80]"
+				:icon-anchor="[40, 70]">
 				<img
 					style="width: 100%"
-					src="../../public/basketball_icon.png"
+					src="../../public/marker-basketball.png"
 					alt="basketball icon">
 			</l-icon>
 		</l-marker>
-		<l-polygon
-			:lat-lngs="polygon.latlngs"
-			:color="polygon.color" />
+		<l-geo-json
+			v-for="area in areas"
+			:key="area.id"
+			:name="area.name"
+			:geojson="area.Polygon" 
+			@click="openAddEventDialog(area)" />
+		<!--		<l-polygon-->
+		<!--			:lat-lngs="polygon.latlngs"-->
+		<!--			:color="polygon.color" -->
+		<!--			@mouseenter="console.log('Mouse enter')"-->
+		<!--			@mouseover="console.log('Mouse enter')" />-->
 		<l-control-zoom
 			class="control-zoom-bottom-right"
 			:position="'bottomright'" />
@@ -106,7 +161,7 @@ onBeforeMount(async () => {
 		</ContextMenu>
 		<AddEventDialog
 			:visible="dialogVisible"
-			:event="eventLatLong"
+			:event="areaEvent"
 			@close-dialog="onDialogClosed" />
 	</l-map>
 </main>

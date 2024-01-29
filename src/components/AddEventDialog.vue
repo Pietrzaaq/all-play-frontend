@@ -1,12 +1,11 @@
 ﻿<script setup>
 import Dialog from 'primevue/dialog';
-import Checkbox from 'primevue/checkbox';
 import { ref, toRef, watch, defineEmits } from "vue";
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import InputNumber from 'primevue/inputnumber';
-import Area from '../models/area.js';
-import areasService from "../services/areasService.js";
+import sportEventService from "../services/sportEventService.js";
+import Calendar from 'primevue/calendar';
+import SportEvent from "../models/sportEvent.js";
 
 const emit = defineEmits(['close-dialog']);
 
@@ -16,16 +15,17 @@ const eventFromProp = toRef(props, 'event');
 const dialogVisible = ref(null);
 
 // Form values
-let eventName = ref('');
-let streetAddress = ref('');
-let isOutdoorArea = ref(false);
+let sportType = ref('');
+let createdBy = ref();
+let creationDate = ref();
+let eventStartDate = ref();
+let eventEndDate = ref();
 
 function addEvent() {
-  console.log(eventFromProp.value);
-  const area = new Area(eventName.value, streetAddress.value, isOutdoorArea.value, eventFromProp.value.lat, eventFromProp.value.lng);
-  console.log(area);
-
-  areasService.create(area);
+  creationDate.value = new Date();
+  
+  const event = new SportEvent(eventFromProp.value.Id, sportType.value, createdBy.value, creationDate.value, eventStartDate.value, eventEndDate.value);
+  sportEventService.create(event);
 
   closeDialog();
 }
@@ -49,46 +49,36 @@ watch(visibleFromProp, function () {
 	@update:visible="closeDialog">
 	<form autocomplete="off">
 		<div class="d-flex flex-column gap-2">
-			<label for="eventName">Event name</label>
+			<label for="eventName">Sport type</label>
 			<InputText
 				id="eventName"
-				v-model="eventName"
+				v-model="sportType"
 				class="w-100" />
 		</div>
 		<div class="d-flex flex-column gap-2 pt-1">
-			<label for="streetAddress">Street address</label>
+			<label for="streetAddress">Created by</label>
 			<InputText
 				id="streetAddress"
-				v-model="streetAddress"
+				v-model="createdBy"
 				class="w-100" />
 		</div>
 		<div class="d-flex flex-column pt-1">
-			<label for="isOutdoorArea">Is outdoor area</label>
-			<Checkbox
-				id="isOutdoorArea"
-				v-model="isOutdoorArea"
-				name="isOutdoorArea"
-				:binary="true" />
+			<label for="eventStartDate">Start date</label>
+			<Calendar
+				id="eventStartDate"
+				v-model="eventStartDate"
+				name="eventStartDate"
+				show-time
+				hour-format="24" />
 		</div>
-		<div class="d-flex flex-row w-100 pt-1 justify-content-left">
-			<div class="d-flex flex-column w-100 pr-1">
-				<label for="lat">Lat</label>
-				<InputNumber
-					id="lat"
-					v-model="eventFromProp.lat"
-					name="lat"
-					disabled
-					class="w-100" />
-			</div>
-			<div class="d-flex flex-column w-100 pl-1">
-				<label for="long">Long</label>
-				<InputNumber
-					id="long"
-					v-model="eventFromProp.lng"
-					name="long"
-					disabled
-					class="w-100" />
-			</div>
+		<div class="d-flex flex-column pt-1">
+			<label for="eventStartDate">End date</label>
+			<Calendar
+				id="eventStartDate"
+				v-model="eventEndDate"
+				name="eventStartDate"
+				show-time
+				hour-format="24" />
 		</div>
 		<div class="d-flex w-100 justify-content-flex-end pt-3">
 			<Button

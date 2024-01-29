@@ -2,11 +2,11 @@
 export default new class AreasService {
 
     async getAll() {
-        return await axios.get('https://localhost:5000/areas');
+        return await axios.get('https://localhost:5000/api/areas');
     }
 
-    async create(sportEvent) {
-        return await axios.post('https://localhost:5000/areas', sportEvent);
+    async create(area) {
+        return await axios.post('https://localhost:5000/api/areas', area);
     }
 };
 

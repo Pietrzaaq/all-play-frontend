@@ -3,8 +3,12 @@
     line-height: 1.5;
     font-weight: 400;
     
-    --primary-background-color: #C850C0;
-    --primary-background-gradient: linear-gradient(45deg, #4158D0 0%, #C850C0 53%, #FFCC70 99%);
+    --primary-background-color: #720e9e;
+    /*--primary-background-gradient: linear-gradient(45deg, #4158D0 0%, #C850C0 53%, #FFCC70 99%);*/
+    
+    --map-purple: #720e9e;
+    --map-purple-light: #EE82EE;
+    --map-purple-dark: #4B0082;
     
     --primary-background-color-dark: #2b2b2b;
     --primary-background-color-dark-light: #5c5c5c;
@@ -42,3 +46,8 @@ body .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     width: 100%;
 }
 
+.leaflet-pane > svg path.leaflet-interactive:hover {
+    color: black;
+    stroke: black;
+    fill: black;
+}
