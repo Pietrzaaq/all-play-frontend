@@ -1,25 +1,37 @@
-﻿module.exports = {
-  extends: [
-    'eslint:recommended',
-    'plugin:vue/vue3-recommended',
-  ],
-  rules: {
-    'semi': [2, "always"],
-    'vue/first-attribute-linebreak': ["warn", {
-      "singleline": "beside",
-      "multiline": "below"
-    }],
-    "vue/html-indent": ["error", "tab", {
-      "attribute": 1,
-      "baseIndent": 0,
-      "closeBracket": 0,
-      "alignAttributesVertically": true,
-      "ignores": []
-    }],
-    "vue/html-closing-bracket-newline": ["error", {
-      "singleline": "never",
-      "multiline": "never"
-    }],
-    "object-curly-spacing": ['error', 'always']
-  }
-}
+/* eslint-env node */
+require('@rushstack/eslint-patch/modern-module-resolution');
+
+module.exports = {
+    root: true,
+    extends: ['plugin:vue/vue3-essential', 'eslint:recommended', '@vue/eslint-config-prettier'],
+    parserOptions: {
+        ecmaVersion: 'latest'
+    },
+    rules: {
+        'vue/multi-word-component-names': 'off',
+        'vue/no-reserved-component-names': 'off',
+        'vue/component-tags-order': [
+            'error',
+            {
+                order: ['script', 'template', 'style']
+            }
+        ],
+        'semi': [2, "always"],
+        'vue/first-attribute-linebreak': ["warn", {
+            "singleline": "beside",
+            "multiline": "below"
+        }],
+        "vue/html-indent": ["error", "tab", {
+            "attribute": 1,
+            "baseIndent": 0,
+            "closeBracket": 0,
+            "alignAttributesVertically": true,
+            "ignores": []
+        }],
+        "vue/html-closing-bracket-newline": ["error", {
+            "singleline": "never",
+            "multiline": "never"
+        }],
+        "object-curly-spacing": ['error', 'always']
+    }
+};

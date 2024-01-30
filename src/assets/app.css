@@ -1,0 +1,40 @@
+﻿:root {
+    /*font-family: Poppins, Roboto, sans-serif;*/
+    /*line-height: 1.5;*/
+    /*font-weight: 400;*/
+    
+    --primary-background-color: #720e9e;
+    --primary-background-gradient: linear-gradient(45deg, #4158D0 0%, #C850C0 53%, #FFCC70 99%);
+    --map-purple: #720e9e;
+    --map-purple-light: #EE82EE;
+    --map-purple-dark: #4B0082;
+    --primary-background-color-dark: #2b2b2b;
+    --primary-background-color-dark-light: #5c5c5c;
+    --primary-font-color: #ffffff;
+}
+
+/*body {*/
+/*    box-sizing: border-box;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    display: flex;*/
+/*}*/
+
+/*body .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {*/
+/*    margin: 0 !important;*/
+/*    font-weight: 500;*/
+/*}*/
+
+.map-context-menu {
+    border-radius: 0 1.5rem 1.5rem 1.5rem !important;
+}
+
+.side-bar-header-search-bar-autocomplete .p-autocomplete-input {
+    width: 100%;
+}
+
+.leaflet-pane > svg path.leaflet-interactive:hover {
+    color: black;
+    stroke: black;
+    fill: black;
+}

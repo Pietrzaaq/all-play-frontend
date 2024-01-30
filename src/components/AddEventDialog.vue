@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import { ref, toRef, watch, defineEmits } from "vue";
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import sportEventService from "../services/sportEventService.js";
+import sportEventService from "../services/SportEventService.js";
 import Calendar from 'primevue/calendar';
 import SportEvent from "../models/sportEvent.js";
 
