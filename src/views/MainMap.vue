@@ -1,10 +1,10 @@
 ﻿<script setup>
-import 'leaflet/dist/leaflet.css';
-import { LMap, LTileLayer, LMarker, LIcon, LControlZoom, LGeoJson } from '@vue-leaflet/vue-leaflet';
 import { onBeforeMount, onMounted, ref } from 'vue';
 import AddEventDialog from '@/components/AddEventDialog.vue';
 import areasService from '../services/AreasService.js';
 import { latLng } from 'leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // Map
 const map = ref(null);
@@ -38,23 +38,17 @@ async function loadAreas() {
     if (result.data && result.data.length > 0) {
         result.data.forEach((a) => {
             a.Polygon = JSON.parse(a.Polygon);
-            a.Coordinates = JSON.parse(a.Coordinates).coordinates;
+            a.Coordinates = { latitude: a.latitude, longitude: a.longitude };
         });
     }
 
     areas.value = result.data;
-}
 
-function zoomUpdated(newZoomValue) {
-    if (zoom.value !== newZoomValue) {
-        zoom.value = newZoomValue;
-    }
-}
+    areas.value.forEach((area) => {
+        const polygon = L.geoJSON(area.Polygon).addTo(map.value);
 
-function centerUpdated(newCenterValue) {
-    if (center.value !== newCenterValue) {
-        center.value = newCenterValue;
-    }
+        polygon.on('click', onPolygonClick);
+    });
 }
 
 function boundsUpdated(newBoundsValue) {
@@ -68,6 +62,58 @@ function openAddEventDialog(area) {
     dialogVisible.value = true;
 }
 
+function initializeMap() {
+    map.value = L.map('map', {
+        center: L.latLng(center.value[0], center.value[1]),
+        zoom: zoom.value
+    });
+
+    map.value.on('load', onMapLoad);
+    map.value.on('zoomend', onZoomEnd);
+    map.value.on('moveend', onMoveEnd);
+    map.value.on('click', onMapClick);
+    map.value.on('unload', onMapUnload);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        minZoom: 4,
+        maxZoom: 19,
+        closePopupOnClick: false,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map.value);
+}
+
+function onMapLoad() {
+    console.log('Map load!');
+}
+
+function onMapUnload() {}
+
+function onZoomEnd(event) {
+    console.log(event);
+    console.log(zoom.value);
+    const newZoomValue = event.target._zoom;
+    console.log(newZoomValue);
+
+    if (zoom.value !== newZoomValue) {
+        console.log('New zoom value', newZoomValue);
+        zoom.value = newZoomValue;
+    }
+}
+
+function onMoveEnd() {
+    console.log('onMoveEnd');
+    const newCenterValue = map.value.getCenter();
+
+    if (center.value.lat !== newCenterValue.lat && center.value.lng !== newCenterValue.lng) {
+        console.log('New center value', newCenterValue);
+        center.value = newCenterValue;
+    }
+}
+
+function onPolygonClick(event) {
+    console.log('onPolygonClick');
+}
+
 onBeforeMount(async () => {
     await loadAreas();
 
@@ -77,25 +123,14 @@ onBeforeMount(async () => {
 });
 
 onMounted(() => {
+    initializeMap();
     console.log('Mounted');
-    console.log(map.value);
-    map.value.ready = false;
 });
 </script>
 
 <template>
     <main class="d-flex" style="width: 100vw; height: 100vh">
-        <l-map ref="map" :zoom="zoom" :center="center" :min-zoom="4" aria-haspopup="true" @click="onMapClick" @update:zoom="zoomUpdated" @update:center="centerUpdated" @update:bounds="boundsUpdated">
-            <l-tile-layer :url="url" layer-type="base" name="OpenStreetMap" />
-            <l-marker v-for="area in areas" :key="area.id" :lat-lng="latLng(area.Coordinates[1], area.Coordinates[0])" :name="area.name" @click="onMarkerClicked">
-                <l-icon :icon-size="[80, 80]" :icon-anchor="[40, 70]">
-                    <img style="width: 100%" src="../../public/map/marker-basketball.png" alt="basketball icon" />
-                </l-icon>
-            </l-marker>
-            <l-geo-json v-for="area in areas" :key="area.id" :name="area.name" :geojson="area.Polygon" @click="openAddEventDialog(area)" />
-            <l-control-zoom class="control-zoom-bottom-right" :position="'bottomright'" />
-            <AddEventDialog :visible="dialogVisible" :event="areaEvent" @close-dialog="onDialogClosed" />
-        </l-map>
+        <div id="map" style="height: 100%" @load="onMapLoad"></div>
     </main>
 </template>
 
