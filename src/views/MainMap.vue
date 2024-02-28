@@ -48,6 +48,10 @@ async function loadAreas() {
         const polygon = L.geoJSON(area.Polygon).addTo(map.value);
 
         polygon.on('click', onPolygonClick);
+        polygon.on('mouseover', onPolygonMouseOver);
+        polygon.on('mouseout', onPolygonMouseOut);
+        // polygon.bindTooltip(`<div>TEEEEST: ${area.FormattedAddress}</div>`, { permanent: true });
+        polygon.bindPopup(`<div id="area-popup" data-area-id="${area.Id}"></div>`, { areaId: area.Id, autoClose: false, closeButton: false, keepInView: true });
     });
 }
 
@@ -112,6 +116,25 @@ function onMoveEnd() {
 
 function onPolygonClick(event) {
     console.log('onPolygonClick');
+}
+
+function onPolygonMouseOver(event) {
+    console.log('onPolygonMouseOver');
+    console.log(this.getPopup());
+    const popup = this.getPopup();
+    const areaId = popup.options.areaId;
+
+    const area = areas.value.find((a) => a.Id === areaId);
+    console.log(area);
+    console.log(map.value);
+    console.log(event);
+
+    this.togglePopup();
+}
+
+function onPolygonMouseOut(event) {
+    console.log('onPolygonMouseOut');
+    // this.togglePopup();
 }
 
 onBeforeMount(async () => {

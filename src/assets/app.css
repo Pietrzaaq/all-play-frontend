@@ -38,3 +38,7 @@
     stroke: black;
     fill: black;
 }
+
+.leaflet-popup .leaflet-popup-tip-container {
+    display: none
+}
