@@ -5,6 +5,7 @@ import areasService from '../services/AreasService.js';
 import { latLng } from 'leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import AreaPopup from "@/components/AreaPopup.vue";
 
 // Map
 const map = ref(null);
@@ -18,6 +19,11 @@ let areas = ref([]);
 const dialogVisible = ref(false);
 const areaEvent = ref();
 
+
+//Popup
+const isPopupVisible = ref(false);
+const teleportTo = ref(null);
+const popupArea = ref(null);
 function onMapClick(e) {
     console.log('onMapClick', e);
 }
@@ -51,7 +57,7 @@ async function loadAreas() {
         polygon.on('mouseover', onPolygonMouseOver);
         polygon.on('mouseout', onPolygonMouseOut);
         // polygon.bindTooltip(`<div>TEEEEST: ${area.FormattedAddress}</div>`, { permanent: true });
-        polygon.bindPopup(`<div id="area-popup" data-area-id="${area.Id}"></div>`, { areaId: area.Id, autoClose: false, closeButton: false, keepInView: true });
+        polygon.bindPopup(`<div class="area-popup" data-area-id="${area.Id}"></div>`, { areaId: area.Id, autoClose: false, closeButton: false, keepInView: true });
     });
 }
 
@@ -122,19 +128,26 @@ function onPolygonMouseOver(event) {
     console.log('onPolygonMouseOver');
     console.log(this.getPopup());
     const popup = this.getPopup();
-    const areaId = popup.options.areaId;
-
-    const area = areas.value.find((a) => a.Id === areaId);
-    console.log(area);
-    console.log(map.value);
-    console.log(event);
-
     this.togglePopup();
+    const areaId = popup.options.areaId;
+    
+    const polygonPopup = document.querySelector(`[data-area-id="${areaId}"]`);
+    const area = areas.value.find((a) => a.Id === areaId);
+    
+    if (!polygonPopup || !area)
+        return;
+
+    teleportTo.value = polygonPopup;
+    popupArea.value = area;
+    isPopupVisible.value = true;
 }
 
 function onPolygonMouseOut(event) {
     console.log('onPolygonMouseOut');
-    // this.togglePopup();
+    isPopupVisible.value = false;
+    teleportTo.value = null;
+    popupArea.value = null;
+    this.togglePopup();
 }
 
 onBeforeMount(async () => {
@@ -155,6 +168,7 @@ onMounted(() => {
     <main class="d-flex" style="width: 100vw; height: 100vh">
         <div id="map" style="height: 100%" @load="onMapLoad"></div>
     </main>
+    <area-popup v-if="isPopupVisible" :teleportTo="teleportTo" :popup-area="popupArea"/>
 </template>
 
 <style scoped>
