@@ -116,7 +116,6 @@ app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
-
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);
 app.component('AutoComplete', AutoComplete);
@@ -206,5 +205,16 @@ app.component('TreeSelect', TreeSelect);
 app.component('TreeTable', TreeTable);
 app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('VirtualScroller', VirtualScroller);
+
+// font-awesome
+/* eslint-disable vue/component-definition-name-casing */
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faGear, faUser, faMagnifyingGlass, faCalendar, faStar, faPeopleGroup, faClockRotateLeft, faPlus, faBasketball, faFutbol, faVolleyball } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faGear, faUser, faMagnifyingGlass, faCalendar, faStar, faPeopleGroup, faClockRotateLeft, faPlus, faBasketball, faFutbol, faVolleyball);
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.mount('#app');

@@ -5,7 +5,7 @@ import areasService from '../services/AreasService.js';
 import { latLng } from 'leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import AreaPopup from "@/components/AreaPopup.vue";
+import AreaPopup from '@/components/AreaPopup.vue';
 
 // Map
 const map = ref(null);
@@ -18,7 +18,6 @@ let areas = ref([]);
 // Dialog
 const dialogVisible = ref(false);
 const areaEvent = ref();
-
 
 //Popup
 const isPopupVisible = ref(false);
@@ -130,12 +129,11 @@ function onPolygonMouseOver(event) {
     const popup = this.getPopup();
     this.togglePopup();
     const areaId = popup.options.areaId;
-    
+
     const polygonPopup = document.querySelector(`[data-area-id="${areaId}"]`);
     const area = areas.value.find((a) => a.Id === areaId);
-    
-    if (!polygonPopup || !area)
-        return;
+
+    if (!polygonPopup || !area) return;
 
     teleportTo.value = polygonPopup;
     popupArea.value = area;
@@ -144,10 +142,10 @@ function onPolygonMouseOver(event) {
 
 function onPolygonMouseOut(event) {
     console.log('onPolygonMouseOut');
+    this.togglePopup();
     isPopupVisible.value = false;
     teleportTo.value = null;
     popupArea.value = null;
-    this.togglePopup();
 }
 
 onBeforeMount(async () => {
@@ -168,7 +166,7 @@ onMounted(() => {
     <main class="d-flex" style="width: 100vw; height: 100vh">
         <div id="map" style="height: 100%" @load="onMapLoad"></div>
     </main>
-    <area-popup v-if="isPopupVisible" :teleportTo="teleportTo" :popup-area="popupArea"/>
+    <area-popup v-if="isPopupVisible" :teleportTo="teleportTo" :popup-area="popupArea" />
 </template>
 
 <style scoped>

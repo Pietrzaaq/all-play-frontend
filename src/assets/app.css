@@ -42,3 +42,7 @@
 .leaflet-popup .leaflet-popup-tip-container {
     display: none
 }
+
+.leaflet-popup {
+    min-width: 25rem;
+}
