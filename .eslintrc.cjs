@@ -3,7 +3,7 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
     root: true,
-    extends: ['plugin:vue/vue3-essential', 'eslint:recommended', '@vue/eslint-config-prettier'],
+    extends: ['plugin:vue/vue3-essential', 'eslint:recommended'],
     parserOptions: {
         ecmaVersion: 'latest'
     },
@@ -21,9 +21,9 @@ module.exports = {
             "singleline": "beside",
             "multiline": "below"
         }],
-        "vue/html-indent": ["error", "tab", {
+        "vue/html-indent": ["error", 4, {
             "attribute": 1,
-            "baseIndent": 0,
+            "baseIndent": 1,
             "closeBracket": 0,
             "alignAttributesVertically": true,
             "ignores": []
