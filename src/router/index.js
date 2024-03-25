@@ -11,7 +11,7 @@ const router = createRouter({
                 {
                     path: '/',
                     name: 'map',
-                    component: () => import('@/views/MainMap.vue')
+                    component: () => import('@/views/Map.vue')
                 },
                 {
                     path: '/pages/timeline',

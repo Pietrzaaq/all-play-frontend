@@ -1,30 +1,42 @@
 ﻿<script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
-import AddEventDialog from '@/components/AddEventDialog.vue';
-import areasService from '../services/AreasService.js';
-import { latLng } from 'leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import AreaPopup from '@/components/AreaPopup.vue';
+import AreaPopup from '@/components/map/popups/AreaPopup.vue';
+import { usePopup } from "../composables/map/popup";
+import { useAreasStore } from "../stores/areas";
+
+// Areas
+const areasStore = useAreasStore();
 
 // Map
 const map = ref(null);
 let center = ref([51.7785551, 19.474152]);
 const zoom = ref(16);
 const bounds = ref(null);
-const url = ref('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
-let areas = ref([]);
+const url = ref('https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key=');
 
 // Dialog
 const dialogVisible = ref(false);
 const areaEvent = ref();
 
 //Popup
-const isPopupVisible = ref(false);
-const teleportTo = ref(null);
-const popupArea = ref(null);
+const { teleportTo, isPopupVisible, popupArea, showPopup, hidePopup, onPopupEnter, onPopupLeave } = usePopup();
+
 function onMapClick(e) {
     console.log('onMapClick', e);
+}
+
+// Polygon
+function onPolygonClick(event) {
+    console.log('onPolygonClick');
+}
+function onPopupMouseEnter() {
+    console.log('onPopupMouseEnter');
+}
+
+function onPopupMouseLeave() {
+    console.log('onPopupMouseLeave');
 }
 
 function onDialogClosed() {
@@ -38,25 +50,21 @@ function onMarkerClicked(event) {
 }
 
 async function loadAreas() {
-    const result = await areasService.getAll();
+    await areasStore.loadAll();
 
-    if (result.data && result.data.length > 0) {
-        result.data.forEach((a) => {
-            a.Polygon = JSON.parse(a.Polygon);
-            a.Coordinates = { latitude: a.latitude, longitude: a.longitude };
-        });
-    }
-
-    areas.value = result.data;
-
-    areas.value.forEach((area) => {
+    areasStore.areas.forEach((area) => {
         const polygon = L.geoJSON(area.Polygon).addTo(map.value);
 
         polygon.on('click', onPolygonClick);
-        polygon.on('mouseover', onPolygonMouseOver);
-        polygon.on('mouseout', onPolygonMouseOut);
-        // polygon.bindTooltip(`<div>TEEEEST: ${area.FormattedAddress}</div>`, { permanent: true });
-        polygon.bindPopup(`<div class="area-popup" data-area-id="${area.Id}"></div>`, { areaId: area.Id, autoClose: false, closeButton: false, keepInView: true });
+        polygon.on('mouseover', showPopup);
+        polygon.on('mouseout', hidePopup);
+        polygon.bindPopup(`<div class="area-popup" data-area-id="${area.Id}"></div>`, {
+            areaId: area.Id,
+            autoClose: false,
+            closeButton: false,
+            keepInView: true,
+            className: 'hidden'
+        });
     });
 }
 
@@ -83,7 +91,7 @@ function initializeMap() {
     map.value.on('click', onMapClick);
     map.value.on('unload', onMapUnload);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(url.value, {
         minZoom: 4,
         maxZoom: 19,
         closePopupOnClick: false,
@@ -119,35 +127,6 @@ function onMoveEnd() {
     }
 }
 
-function onPolygonClick(event) {
-    console.log('onPolygonClick');
-}
-
-function onPolygonMouseOver(event) {
-    console.log('onPolygonMouseOver');
-    console.log(this.getPopup());
-    const popup = this.getPopup();
-    this.togglePopup();
-    const areaId = popup.options.areaId;
-
-    const polygonPopup = document.querySelector(`[data-area-id="${areaId}"]`);
-    const area = areas.value.find((a) => a.Id === areaId);
-
-    if (!polygonPopup || !area) return;
-
-    teleportTo.value = polygonPopup;
-    popupArea.value = area;
-    isPopupVisible.value = true;
-}
-
-function onPolygonMouseOut(event) {
-    console.log('onPolygonMouseOut');
-    this.togglePopup();
-    isPopupVisible.value = false;
-    teleportTo.value = null;
-    popupArea.value = null;
-}
-
 onBeforeMount(async () => {
     await loadAreas();
 
@@ -163,10 +142,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="d-flex" style="width: 100vw; height: 100vh">
+    <main style="width: 100vw; height: 100vh">
         <div id="map" style="height: 100%" @load="onMapLoad"></div>
     </main>
-    <area-popup v-if="isPopupVisible" :teleportTo="teleportTo" :popup-area="popupArea" />
+    <AreaPopup v-if="isPopupVisible" :teleportTo="teleportTo" :popup-area="popupArea" @popupEnter="onPopupEnter" @popupLeave="onPopupLeave"></AreaPopup>
 </template>
 
 <style scoped>

@@ -105,6 +105,9 @@ import '@/assets/app.css';
 
 const app = createApp(App);
 
+const pinia = createPinia();
+app.use(pinia);
+
 app.use(router);
 app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
@@ -214,6 +217,7 @@ import { faGear, faUser, faMagnifyingGlass, faCalendar, faStar, faPeopleGroup, f
 library.add(faGear, faUser, faMagnifyingGlass, faCalendar, faStar, faPeopleGroup, faClockRotateLeft, faPlus, faBasketball, faFutbol, faVolleyball);
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { createPinia } from "pinia";
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 
